@@ -109,6 +109,12 @@ class Battleship:
             return "You fired out of battlefield!"
         if not isinstance(self.field[location], Ship):
             return "Miss!"
+        if self.field[location].is_drowned:
+            return "Sunk!"
+        if not self.field[location].get_deck(
+            location[0], location[1]
+        ).is_alive:
+            return "Hit!"
         self.field[location].fire(location[0], location[1])
         if self.field[location].is_drowned:
             return "Sunk!"
@@ -117,10 +123,8 @@ class Battleship:
     def print_field(self) -> None:
         str_battlefield = ""
         for key, value in self.field.items():
-            if value is None:
+            if value is None or value is self.ADJACENT:
                 str_battlefield += "  ~"
-            elif value is self.ADJACENT:
-                str_battlefield += "  \u223f"
             elif value.is_drowned:
                 str_battlefield += "  x"
             elif value.get_deck(key[0], key[1]).is_alive:
